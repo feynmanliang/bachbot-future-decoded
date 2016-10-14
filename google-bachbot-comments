@@ -1,0 +1,9 @@
+* Plot activations in Fourier domain
+* Levenshtein edit distance for checking if model is memorizing training corpus
+    * Find nearest points in training set to model outputs
+    * Compare lengths of matches: "coherence length" -- what length does overfitting fall apart
+	* At what level is the model overfitting?
+* Reverse BTAS, is one part harder to predict than others?
+    * Bass-line is usually the first one filled in by hand
+* Bach chorales are not solved until we address overfitting
+    * Solved? Should produce things pleasant to listen to.

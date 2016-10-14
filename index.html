@@ -4,10 +4,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>BachBot - automatic stylistic composition</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -24,9 +24,244 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<section>
+						<h1 class="title">BachBot - automatic stylistic composition</h1>
+						<h2 class="author">Feynman Liang</h2>
+						<h3 class="date">Google Magenta, October 13, 2016</h3>
+					</section>
+				</section>
+				<section>
+					<section id="about-me">
+						<ul>
+							<li class="fragment" data-fragment-index="0">Stats PhD @ Berkeley</li>
+							<li class="fragment" data-fragment-index="1">Engineering Manager @ Gigster</li>
+							<li class="fragment" data-fragment-index="1">Worked on BachBot at Cambridge University w/ MSR</li>
+						</ul>
+					</section>
+					<section id="overview">
+							<h1>Overview</h1>
+							<ul>
+								<li class="fragment" data-fragment-index="0">Corpus preparation</li>
+								<li class="fragment" data-fragment-index="1">Model analysis</li>
+								<li class="fragment" data-fragment-index="2">Subjective evaluation</li>
+							</ul>
+					</section>
+				</section>
+				<section>
+					<section id="preparing chorale corpus">
+						<h1>Preparing Bach Chorale Corpus</h1>
+						<ul>
+							<li class="fragment" data-fragment-index="0">
+								BWV 1-438
+							</li>
+							<li class="fragment" data-fragment-index="1">
+								Preprocessing
+								<ul>
+									<li class="fragment" data-fragment-index="2">Key Normalization</li>
+									<li class="fragment" data-fragment-index="3">Time Quantization</li>
+								</ul>
+							</li>
+							<li class="fragment" data-fragment-index="4">
+								Sequence encoding
+								<ul>
+									<li class="fragment" data-fragment-index="5">Handling Polyphony</li>
+									<li class="fragment" data-fragment-index="6">Fermatas</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+				<!-- <section> -->
+				<!-- 	<p>Math Formula</p> -->
+				<!-- 	$\cos (2\theta) = \cos^2 \theta - \sin^2 \theta$ -->
+				<!-- </section> -->
+					<section>
+						<h1>Transpose to Cmaj/Amin</h1>
+						<pre>
+							<code>
+majors = dict([("A-", 4),("A", 3),("B-", 2),("B", 1),("C", 0),("C#",-1),("D-", -1),("D", -2),("E-", -3),("E", -4),("F", -5),("F#",6),("G-", 6),("G", 5)])
+minors = dict([("A-", 1),("A", 0),("B-", -1),("B", -2),("C", -3),("C#",-4),("D-", -4),("D", -5),("E-", 6),("E", 5),("F", 4),("F#",3),("G-", 3),("G", 2)])
+
+key = score.analyze('key')
+if key.mode == "major":
+	halfSteps = majors[key.tonic.name]
+elif key.mode == "minor":
+	halfSteps = minors[key.tonic.name]
+tScore = score.transpose(halfSteps)
+
+for ks in tScore.flat.getKeySignatures():
+	ks.transpose(halfSteps, inPlace=True)
+return tScore
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h1>Quantize to 1/16 note frames, add ties</h1>
+						<pre>
+							<code>
+encoded_score = []
+for chord in (score
+		.quantize((FRAMES_PER_CROTCHET,))
+		.chordify(addPartIdAsGroup=bool(parts_to_mask))
+		.flat
+		.notesAndRests): # aggregate parts, remove markup
+	if chord.isRest:
+		encoded_score.extend((int(chord.quarterLength * FRAMES_PER_CROTCHET)) * [[]])
+	else:
+		has_fermata = (keep_fermatas) and any(map(lambda e: e.isClassOrSubclass(('Fermata',)), chord.expressions))
+
+		encoded_chord = []
+		for note in chord:
+			if parts_to_mask and note.pitch.groups[0] in parts_to_mask:
+				encoded_chord.append(BLANK_MASK_TXT)
+			else:
+				has_tie = note.tie is not None and note.tie.type != 'start'
+				encoded_chord.append((note.pitch.midi, has_tie))
+		encoded_score.append((has_fermata, encoded_chord))
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h1>JCB Chorales (Allan, Williams) distorts 2.85% of durations</h1>
+						<p><img src="images/jcb-distortion.png"></p>
+					</section>
+					<section>
+						<h1>Sequence Encoding</h1>
+						<ul>
+							<li class="fragment" data-fragment-index="0">
+								Reduce vocabulary size -- SATB ordering (e.g. <code>char-rnn</code> vs <code>word-rnn</code>)
+							</li>
+							<li class="fragment" data-fragment-index="0">
+								Learn phrase structure -- Include fermatas
+							</li>
+					</section>
+					<section>
+						<h1>Example encoding</h1>
+						<pre>
+						<code>
+START
+(59, True)
+(56, True)
+(52, True)
+(47, True)
+|||
+(59, True)
+(56, True)
+(52, True)
+(47, True)
+|||
+(.)
+(57, False)
+(52, False)
+(48, False)
+(45, False)
+|||
+(.)
+(57, True)
+(52, True)
+(48, True)
+(45, True)
+|||
+END
+						</code>
+						</pre>
+					</section>
+					<section>
+						<h1>Corpus statistics</h1>
+						<p><img src="images/corpus-stats.png"></p>
+					</section>
+					<section>
+						<h1>Zipf's law failure</h1>
+						<p><img src="images/non-zipf.png"></p>
+						Best modiied Kneser-Ney language model achieves
+						1.991 test perplexity, LSTM achieves 1.391
+					</section>
+				</section>
+				<section>
+					<section>
+						<h1>Model analysis</h1>
+					</section>
+					<section>
+						<h1>Dropout</h1>
+						<p><img src="images/dropout.png"></p>
+					</section>
+					<section>
+						<h1>Neuron activations</h1>
+						<p><img src="images/neuron-activations.png"></p>
+					</section>
+					<section>
+						<h1>Specificity to music-theoretic concepts</h1>
+						<p><img src="images/model-analysis-cells-individual.png"></p>
+					</section>
+					<section>
+						<h1>Composition</h1>
+						<p><img src="images/"></p>
+					</section>
+					<section>
+						<h1>Harmonization</h1>
+						<p><img src="images/harmonization-error-rates.png"></p>
+					</section>
+				</section>
+				<section>
+					<section id="">
+						<h1>Subjective Evaluation</h1>
+						<p><a href="http://bachbot.com/">bachbot.com</a></p>
+						</section>
+					<section>
+						<h1>Architecture</h1>
+						<code>https://github.com/feynmanliang/subjective-evaluation-{client,server}</code>
+					</section>
+					<section>
+						<h1>Participants</h1>
+						<p><img src="images/participants-by-country.png"></p>
+					</section>
+					<section>
+						<h1>Participants</h1>
+						<p><img src="images/participant-skills.png"></p>
+					</section>
+					<section>
+						<h1>Results</h1>
+						<p><img src="images/performance-questiontype-experience.png"></p>
+					</section>
+					</section>
+				</section>
+				<section>
+					<section id="conclusion"><h1>Conclusion</h1></section>
+					<section id="conclusion-1">
+						<h1>Conclusion</h1>
+						<ul>
+							<li class="fragment" data-fragment-index="0">
+								BachBot is an automatic stylistic composition model capable of learning
+								music theory concepts without prior knowledge
+							</li>
+							<li class="fragment" data-fragment-index="1">
+								Subjective evaluation shows that generated compositions is close to indistinguishable
+								from real Bach
+							</li>
+							<li class="fragment" data-fragment-index="2">
+								Future work:
+								<ul>
+									<li class="fragment" data-fragment-index="3">
+										Account for future in harmonization
+									</li>
+									<li class="fragment" data-fragment-index="4">
+										Investigate orderings besides SATB / other ways
+										to reduce vocabulary
+									</li>
+									<li class="fragment" data-fragment-index="5">
+										Try other corpuses
+									</li>
+								</ul>
+							</li>>
+						</ul>
+						</section><section id="questions">
+						<h1>Questions?</h1>
+						<p><a href="http://bachbot.com/">bachbot.com</a></p>
+					</section>
+				</section>
 			</div>
+			</div>
+
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
@@ -37,8 +272,14 @@
 			Reveal.initialize({
 				history: true,
 
+				math: {
+					mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+					config: 'TeX-AMS_HTML-full' // See http://docs.mathjax.org/en/latest/config-files.html
+				},
+
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
+					{ src: 'plugin/math/math.js', async: true },
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
