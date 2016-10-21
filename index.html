@@ -26,119 +26,69 @@
 			<div class="slides">
 				<section>
 					<section>
-						<h1 class="title">BachBot - automatic stylistic composition</h1>
-						<h2 class="author">Feynman Liang</h2>
-						<h3 class="date">Google Magenta, October 13, 2016</h3>
+						<h1 class="title">BachBot</h1>
+						<h2 class="subtitle">Automatic stylistic composition</h1>
+						<h4 class="author1">Feynman Liang</h2>
+						<h4 class="author2">Emin Arakelian</h2>
+						<h5 class="date">Cornell University, October 22, 2016</h3>
 					</section>
 				</section>
 				<section>
-					<section id="about-me">
-						<ul>
-							<li class="fragment" data-fragment-index="0">Stats PhD @ Berkeley</li>
-							<li class="fragment" data-fragment-index="1">Engineering Manager @ Gigster</li>
-							<li class="fragment" data-fragment-index="1">Worked on BachBot at Cambridge University w/ MSR</li>
-						</ul>
-					</section>
 					<section id="overview">
 							<h1>Overview</h1>
 							<ul>
-								<li class="fragment" data-fragment-index="0">Corpus preparation</li>
-								<li class="fragment" data-fragment-index="1">Model analysis</li>
-								<li class="fragment" data-fragment-index="2">Subjective evaluation</li>
+								<li class="fragment">Background</li>
+								<li class="fragment">Corpus preparation</li>
+								<li class="fragment">Model analysis</li>
+								<li class="fragment">Subjective evaluation</li>
 							</ul>
 					</section>
 				</section>
 				<section>
-					<section id="preparing chorale corpus">
-						<h1>Preparing Bach Chorale Corpus</h1>
-						<ul>
-							<li class="fragment" data-fragment-index="0">
-								BWV 1-438
-							</li>
-							<li class="fragment" data-fragment-index="1">
-								Preprocessing
-								<ul>
-									<li class="fragment" data-fragment-index="2">Key Normalization</li>
-									<li class="fragment" data-fragment-index="3">Time Quantization</li>
-								</ul>
-							</li>
-							<li class="fragment" data-fragment-index="4">
-								Sequence encoding
-								<ul>
-									<li class="fragment" data-fragment-index="5">Handling Polyphony</li>
-									<li class="fragment" data-fragment-index="6">Fermatas</li>
-								</ul>
-							</li>
-						</ul>
+					<section id="background">
+						<h1>Background</h1>
+					</section>
+				</section>
+				<section>
+					<section id="preparing-chorale-corpus">
+						<h1>Corpus preparation</h1>
 					</section>
 				<!-- <section> -->
 				<!-- 	<p>Math Formula</p> -->
 				<!-- 	$\cos (2\theta) = \cos^2 \theta - \sin^2 \theta$ -->
 				<!-- </section> -->
 					<section>
-						<h1>Transpose to Cmaj/Amin</h1>
-						<pre>
-							<code>
-majors = dict([("A-", 4),("A", 3),("B-", 2),("B", 1),("C", 0),("C#",-1),("D-", -1),("D", -2),("E-", -3),("E", -4),("F", -5),("F#",6),("G-", 6),("G", 5)])
-minors = dict([("A-", 1),("A", 0),("B-", -1),("B", -2),("C", -3),("C#",-4),("D-", -4),("D", -5),("E-", 6),("E", 5),("F", 4),("F#",3),("G-", 3),("G", 2)])
-
-key = score.analyze('key')
-if key.mode == "major":
-	halfSteps = majors[key.tonic.name]
-elif key.mode == "minor":
-	halfSteps = minors[key.tonic.name]
-tScore = score.transpose(halfSteps)
-
-for ks in tScore.flat.getKeySignatures():
-	ks.transpose(halfSteps, inPlace=True)
-return tScore
-							</code>
-						</pre>
+						<h1>Transpose/Quantize</h1>
+						<p><img src="images/preproc-before.png"></p>
+						<p><img src="images/preproc-after.png"></p>
 					</section>
 					<section>
-						<h1>Quantize to 1/16 note frames, add ties</h1>
-						<pre>
-							<code>
-encoded_score = []
-for chord in (score
-		.quantize((FRAMES_PER_CROTCHET,))
-		.chordify(addPartIdAsGroup=bool(parts_to_mask))
-		.flat
-		.notesAndRests): # aggregate parts, remove markup
-	if chord.isRest:
-		encoded_score.extend((int(chord.quarterLength * FRAMES_PER_CROTCHET)) * [[]])
-	else:
-		has_fermata = (keep_fermatas) and any(map(lambda e: e.isClassOrSubclass(('Fermata',)), chord.expressions))
-
-		encoded_chord = []
-		for note in chord:
-			if parts_to_mask and note.pitch.groups[0] in parts_to_mask:
-				encoded_chord.append(BLANK_MASK_TXT)
-			else:
-				has_tie = note.tie is not None and note.tie.type != 'start'
-				encoded_chord.append((note.pitch.midi, has_tie))
-		encoded_score.append((has_fermata, encoded_chord))
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h1>JCB Chorales (Allan, Williams) distorts 2.85% of durations</h1>
-						<p><img src="images/jcb-distortion.png"></p>
-					</section>
-					<section>
-						<h1>Sequence Encoding</h1>
+						<h1>Handling Polyphony</h1>
 						<ul>
-							<li class="fragment" data-fragment-index="0">
-								Reduce vocabulary size -- SATB ordering (e.g. <code>char-rnn</code> vs <code>word-rnn</code>)
+							<li>
+								<b>Question:</b> How many chords can be constructed from
+								4 voices, each with 128 pitches?
 							</li>
-							<li class="fragment" data-fragment-index="0">
-								Learn phrase structure -- Include fermatas
+							<li class="fragment">
+								<b>Answer:</b> $O(128^4)$
 							</li>
 					</section>
 					<section>
-						<h1>Example encoding</h1>
-						<pre>
-						<code>
+						<h1>Handling Polyphony</h1>
+						<ul>
+							<li>
+								Reduce vocabulary size by treating parts independently
+							</li>
+							<li class="fragment">
+								SATB ordering
+							</li>
+						</ul>
+						<div class="fragment" style="width: 40%; float: left;">
+							<img src="images/sequential-encoding-parts.png">
+						</div>
+						<div class="fragment" style="margin-left: 40%; width: 60%;">
+							<pre>
+								<code>
 START
 (59, True)
 (56, True)
@@ -163,28 +113,23 @@ START
 (45, True)
 |||
 END
-						</code>
-						</pre>
+								</code>
+							</pre>
+						</div>
 					</section>
-					<section>
-						<h1>Corpus statistics</h1>
-						<p><img src="images/corpus-stats.png"></p>
-					</section>
-					<section>
-						<h1>Zipf's law failure</h1>
-						<p><img src="images/non-zipf.png"></p>
-						Best modiied Kneser-Ney language model achieves
-						1.991 test perplexity, LSTM achieves 1.391
-					</section>
+					<!-- <section> -->
+					<!-- 	<h1>Corpus statistics</h1> -->
+					<!-- 	<p><img src="images/corpus-stats.png"></p> -->
+					<!-- </section> -->
 				</section>
 				<section>
 					<section>
 						<h1>Model analysis</h1>
 					</section>
-					<section>
-						<h1>Dropout</h1>
-						<p><img src="images/dropout.png"></p>
-					</section>
+					<!-- <section> -->
+					<!-- 	<h1>Dropout</h1> -->
+					<!-- 	<p><img src="images/dropout.png"></p> -->
+					<!-- </section> -->
 					<section>
 						<h1>Neuron activations</h1>
 						<p><img src="images/neuron-activations.png"></p>
@@ -194,30 +139,31 @@ END
 						<p><img src="images/model-analysis-cells-individual.png"></p>
 					</section>
 					<section>
-						<h1>Composition</h1>
-						<p><img src="images/"></p>
+						<h1>Model Outputs</h1>
+						<iframe scrolling="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/246633991&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false" width="100%" height="450" frameborder="0">
+						</iframe>
 					</section>
-					<section>
-						<h1>Harmonization</h1>
-						<p><img src="images/harmonization-error-rates.png"></p>
-					</section>
+					<!-- <section> -->
+					<!-- 	<h1>Harmonization</h1> -->
+					<!-- 	<p><img src="images/harmonization-error-rates.png"></p> -->
+					<!-- </section> -->
 				</section>
 				<section>
-					<section id="">
-						<h1>Subjective Evaluation</h1>
-						<p><a href="http://bachbot.com/">bachbot.com</a></p>
-						</section>
 					<section>
-						<h1>Architecture</h1>
-						<code>https://github.com/feynmanliang/subjective-evaluation-{client,server}</code>
+						<h1>Subjective Evaluation</h1>
+						<p><a href="http://bachbot.com/">http://bachbot.com</a></p>
 					</section>
 					<section>
 						<h1>Participants</h1>
 						<p><img src="images/participants-by-country.png"></p>
 					</section>
+					<!-- <section> -->
+					<!-- 	<h1>Participants</h1> -->
+					<!-- 	<p><img src="images/participant-skills.png"></p> -->
+					<!-- </section> -->
 					<section>
-						<h1>Participants</h1>
-						<p><img src="images/participant-skills.png"></p>
+						<h1>Results</h1>
+						<p><img src="images/performance-questiontype.png"></p>
 					</section>
 					<section>
 						<h1>Results</h1>
@@ -230,38 +176,45 @@ END
 					<section id="conclusion-1">
 						<h1>Conclusion</h1>
 						<ul>
-							<li class="fragment" data-fragment-index="0">
-								BachBot is an automatic stylistic composition model capable of learning
-								music theory concepts without prior knowledge
+							<li>
+								Model learns music theory without prior knowledge, empirically
+								validating theory
 							</li>
-							<li class="fragment" data-fragment-index="1">
-								Subjective evaluation shows that generated compositions is close to indistinguishable
-								from real Bach
+							<li class="fragment">
+								Average user performs only 9% better than random guessing
 							</li>
-							<li class="fragment" data-fragment-index="2">
-								Future work:
-								<ul>
-									<li class="fragment" data-fragment-index="3">
-										Account for future in harmonization
-									</li>
-									<li class="fragment" data-fragment-index="4">
-										Investigate orderings besides SATB / other ways
-										to reduce vocabulary
-									</li>
-									<li class="fragment" data-fragment-index="5">
-										Try other corpuses
-									</li>
-								</ul>
-							</li>>
+							<!-- <li class="fragment"> -->
+							<!-- 	Future work: -->
+							<!-- 	<ul> -->
+							<!-- 		<li class="fragment" data-fragment-index="3"> -->
+							<!-- 			Account for future in harmonization -->
+							<!-- 		</li> -->
+							<!-- 		<li class="fragment" data-fragment-index="4"> -->
+							<!-- 			Investigate orderings besides SATB / other ways -->
+							<!-- 			to reduce vocabulary -->
+							<!-- 		</li> -->
+							<!-- 		<li class="fragment" data-fragment-index="5"> -->
+							<!-- 			Try other corpuses -->
+							<!-- 		</li> -->
+							<!-- 	</ul> -->
+							<!-- </li> -->
 						</ul>
-						</section><section id="questions">
+					</section>
+					<section id="questions">
 						<h1>Questions?</h1>
-						<p><a href="http://bachbot.com/">bachbot.com</a></p>
 					</section>
 				</section>
+				<section id="gigster">
+					<img style="border: 0px;" src="images/gigster-logo.png" />
+					<h1>Gigster</h1>
+					<p>We're hiring!</p>
+					<a href="http://cornell.gigster.com/">http://cornell.gigster.com</a><br />
+					<code>{feynman,emin}@gigster.com</code>
+				</section>
+				<section>
+					<section id="practical"><h1>Build your own BachBot!</h1></section>
+				</section>
 			</div>
-			</div>
-
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
