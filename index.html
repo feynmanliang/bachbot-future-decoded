@@ -59,16 +59,17 @@
 					<section id="overview">
 							<h1>Overview</h1>
 							<ul>
-								<li class="fragment">Background</li>
-								<li class="fragment">Training BachBot</li>
+								<li class="fragment">Music theory primer</li>
+								<li class="fragment">Corpus preparation</li>
+								<li class="fragment">Neural networks primer</li>
 								<li class="fragment">Results and analysis</li>
 								<li class="fragment">Musical turing test</li>
 							</ul>
 					</section>
 				</section>
 				<section>
-					<section id="background">
-						<h1>Background</h1>
+					<section id="music-background">
+						<h1>Music theory primer</h1>
 					</section>
 					<section id="piano-roll">
 						<h1>Piano Roll</h1>
@@ -99,27 +100,6 @@
 							</ul>
 						</aside>
 					</section>
-					<section id="neuron">
-						<h1>Neurons</h1>
-						<img height="500" src="images/neuron.png">
-					</section>
-					<section id="ffw">
-						<h1>Feedforward Network</h1>
-						<img height="500" src="images/ffw.png">
-					</section>
-					<section id="rnn">
-						<h1>Memory Cell</h1>
-						<img height="500" src="images/memory-cell.png">
-					</section>
-					<section id="stacked-rnn">
-						<h1>Unrolling / Stacking</h1>
-						<img height="500" src="images/stacked-rnn.png">
-					</section>
-					<section id="rnn-training">
-						<h1>Training</h1>
-						<img height="500" src="images/charseq.jpeg">
-						<small><a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">https://karpathy.github.io/2015/05/21/rnn-effectiveness/</a></small>
-					</section>
 				</section>
 				<section>
 					<section id="corpus-preparation">
@@ -140,6 +120,7 @@
 							<li class="fragment">
 								<b>Answer:</b> $O(128^4)$
 							</li>
+						</ul>
 					</section>
 					<section>
 						<h1>Handling Polyphony</h1>
@@ -189,6 +170,46 @@ END
 					<!-- 	<h1>Corpus statistics</h1> -->
 					<!-- 	<p><img src="images/corpus-stats.png"></p> -->
 					<!-- </section> -->
+					<section>
+						<ul>
+							<li><code>bachbot datasets prepare</code></li>
+							<li><code>bachbot datasets concatenate_corpus</code></li>
+						</ul>
+					</section>
+				</section>
+				<section>
+					<section id="nn-background">
+						<h1>Neural networks primer</h1>
+					</section>
+					<section id="neuron">
+						<h1>Neurons</h1>
+						<img height="500" src="images/neuron.png">
+					</section>
+					<section id="ffw">
+						<h1>Feedforward Network</h1>
+						<img height="500" src="images/ffw.png">
+					</section>
+					<section id="rnn">
+						<h1>Memory Cell</h1>
+						<img height="500" src="images/memory-cell.png">
+					</section>
+					<section id="stacked-rnn">
+						<h1>Unrolling / Stacking</h1>
+						<img height="500" src="images/stacked-rnn.png">
+					</section>
+					<section id="rnn-training">
+						<h1>Training</h1>
+						<img height="500" src="images/charseq.jpeg">
+						<small><a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">https://karpathy.github.io/2015/05/21/rnn-effectiveness/</a></small>
+					</section>
+					<section>
+						<ul>
+							<li><code>bachbot make_h5</code></li>
+							<li>
+								<code>bachbot train</code>
+							</li>
+						</ul>
+					</section>
 				</section>
 				<section>
 					<section>
