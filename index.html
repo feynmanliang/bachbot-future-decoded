@@ -110,8 +110,12 @@
 					</section>
 					<section id="transpose-quantize">
 						<h1>Transpose/Quantize</h1>
-						<img width="450" src="images/preproc-before.png">
-						<img width="450" src="images/preproc-after.png">
+						<a href="images/preproc-before.png">
+							<img width="450" src="images/preproc-before.png" />
+						</a>
+						<a href="images/preproc-after.png">
+							<img width="450" src="images/preproc-after.png" />
+						</a>
 					</section>
 					<section>
 						<h1>Handling Polyphony</h1>
@@ -136,7 +140,7 @@
 							</li>
 						</ul>
 						<div class="fragment" style="width: 40%; float: left;">
-							<img src="images/sequential-encoding-parts.png">
+							<img src="images/sequential-encoding-parts.png" />
 						</div>
 						<div class="fragment" style="margin-left: 40%; width: 60%;">
 							<pre>
@@ -174,10 +178,9 @@ END
 					<!-- 	<p><img src="images/corpus-stats.png"></p> -->
 					<!-- </section> -->
 					<section>
-						<ul>
-							<li><code>bachbot datasets prepare</code></li>
-							<li><code>bachbot datasets concatenate_corpus</code></li>
-						</ul>
+						<a href="images/practical-prepare.png">
+							<img src="images/practical-prepare.png" />
+						</a>
 					</section>
 				</section>
 				<section>
@@ -186,28 +189,28 @@ END
 					</section>
 					<section id="neuron">
 						<h1>Neurons</h1>
-						<img height="500" src="images/neuron.png">
+						<img height="500" src="images/neuron.png" />
 					</section>
 					<section id="ffw">
 						<h1>Feedforward Network</h1>
-						<img height="500" src="images/ffw.png">
+						<img height="500" src="images/ffw.png" />
 					</section>
 					<section id="rnn">
 						<h1>Memory Cell</h1>
-						<img height="500" src="images/memory-cell.png">
+						<img height="500" src="images/memory-cell.png" />
 					</section>
 					<section id="stacked-rnn">
 						<h1>Unrolling / Stacking</h1>
-						<img height="500" src="images/stacked-rnn.png">
+						<img height="500" src="images/stacked-rnn.png" />
 					</section>
 					<section id="rnn-training">
 						<h1>Sequential prediction</h1>
-						<img height="500" src="images/charseq.jpeg">
+						<img height="500" src="images/charseq.jpeg"/ >
 						<small><a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">https://karpathy.github.io/2015/05/21/rnn-effectiveness/</a></small>
 					</section>
 					<section id="backprop">
 						<h1>Backprop</h1>
-						<img height="500" src="images/backprop.png">
+						<img height="500" src="images/backprop.png" />
 						<aside class="notes">
 							Talk about vanishing gradients (iterated matrix multiplication along hidden state gradients)
 							to motivate LSTM (next slide)
@@ -215,15 +218,12 @@ END
 					</section>
 					<section id="lstm">
 						<h1>LSTM</h1>
-						<img height="500" src="images/LSTM.png">
+						<img height="500" src="images/LSTM.png" />
 					</section>
 					<section>
-						<ul>
-							<li><code>bachbot make_h5</code></li>
-							<li>
-								<code>bachbot train</code>
-							</li>
-						</ul>
+						<a href="images/practical-train-decode.png">
+							<img src="images/practical-train-decode.png" />
+						</a>
 					</section>
 				</section>
 				<section>
@@ -318,10 +318,14 @@ END
 					<code>{feynman,emin}@gigster.com</code>
 				</section>
 				<section>
+					<section>
+						<h3>Has your BachBot learned to compose?</h3>
+						<img src="images/practical-train-decode.png" />
+					</section>
 					<section data-markdown id="practical-sample">
 						<script type="text/template">
-							# Has your BachBot learned to compose?
-							* Highest `iter`, `temp=0.9` is a decent choice
+							### Has your BachBot learned to compose?
+							* Decent choices: most recent `iter`, `temp=0.9`
 							```
 							bachbot sample ~/bachbot/scratch/checkpoints/*/checkpoint_<ITER>.t7 -t <TEMP>
 							bachbot decode sampled_stream ~/bachbot/scratch/sampled_$TMP.utf
