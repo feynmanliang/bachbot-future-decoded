@@ -25,31 +25,30 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<section>
+					<section id="title-page">
 						<h1 class="title">BachBot</h1>
 						<h2 class="subtitle">Automatic stylistic composition</h1>
 						<h4 class="author1">Feynman Liang</h2>
 						<h4 class="author2">Emin Arakelian</h2>
 						<h5 class="date">Cornell University, October 22, 2016</h3>
 					</section>
-					<section data-markdown>
+					<section data-markdown id="practical-train">
 						<script type="text/template">
-							# Build your own BachBot!
+							## Build your own BachBot!
 							* Install `docker` from [docker.com](https://www.docker.com/)
 							* Using USB:
 							```
 							docker load < bachbot-cornell.tar
 							```
 							* Dockerhub:
-							<!-- TODO: test docker pull -->
 							```
 							docker pull fliang/bachbot:cornell
 							```
 							* Prepare data, train model:
 							```
-							docker run --name bachbot -it bachbot:cornell bash
+							docker run --name bachbot -it bachbot:cornell
 							bachbot datasets prepare
-							bachbot datasets concatenate_corpus ~/bachbot/scratch/BWV-*.utf
+							bachbot datasets concatenate_corpus scratch/BWV-*.utf
 							bachbot make_h5
 							bachbot train
 							```
@@ -61,9 +60,9 @@
 							<h1>Overview</h1>
 							<ul>
 								<li class="fragment">Background</li>
-								<li class="fragment">Corpus preparation</li>
-								<li class="fragment">Model analysis</li>
-								<li class="fragment">Music turing test</li>
+								<li class="fragment">Training BachBot</li>
+								<li class="fragment">Results and analysis</li>
+								<li class="fragment">Musical turing test</li>
 							</ul>
 					</section>
 				</section>
@@ -71,49 +70,62 @@
 					<section id="background">
 						<h1>Background</h1>
 					</section>
-					<section data-markdown id="background-piano-roll">
-						<script type="text/template">
-							# Piano Roll
-							[virtualpiano.net](http://virtualpiano.net/)
-
-							<img height="500" src="images/piano-roll.png" />
-						</script>
+					<section id="piano-roll">
+						<h1>Piano Roll</h1>
+						<a href="http://virtualpiano.net/">virtualpiano.net</a>
+						<img height="500" src="images/piano-roll.png" />
+						<aside class="notes">
+							<ul>
+								<li>pitch</li>
+								<li>duration</li>
+								<li>transposition</li>
+								<li>harmonization</li>
+								<li>cadences</li>
+								<li>fermatas</li>
+							</ul>
+						</aside>
 					</section>
-					<section id="background-piano-roll">
+					<section id="sheet-music">
 						<h1>Sheet Music</h1>
 						<img src="images/score.png" />
+						<aside class="notes">
+							<ul>
+								<li>pitch</li>
+								<li>duration</li>
+								<li>transposition</li>
+								<li>harmonization</li>
+								<li>cadences</li>
+								<li>fermatas</li>
+							</ul>
+						</aside>
 					</section>
-					<section id="background-neuron">
+					<section id="neuron">
 						<h1>Neurons</h1>
 						<img height="500" src="images/neuron.png">
 					</section>
-					<section id="background-ffw">
-						<h1>Feedforwaard Network</h1>
+					<section id="ffw">
+						<h1>Feedforward Network</h1>
 						<img height="500" src="images/ffw.png">
 					</section>
-					<section id="background-rnn">
+					<section id="rnn">
 						<h1>Memory Cell</h1>
 						<img height="500" src="images/memory-cell.png">
 					</section>
-					<section id="background-stacked-rnn">
+					<section id="stacked-rnn">
 						<h1>Unrolling / Stacking</h1>
 						<img height="500" src="images/stacked-rnn.png">
 					</section>
-					<section id="background-training">
+					<section id="rnn-training">
 						<h1>Training</h1>
 						<img height="500" src="images/charseq.jpeg">
 						<small><a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">https://karpathy.github.io/2015/05/21/rnn-effectiveness/</a></small>
 					</section>
 				</section>
 				<section>
-					<section id="preparing-chorale-corpus">
+					<section id="corpus-preparation">
 						<h1>Corpus preparation</h1>
 					</section>
-				<!-- <section> -->
-				<!-- 	<p>Math Formula</p> -->
-				<!-- 	$\cos (2\theta) = \cos^2 \theta - \sin^2 \theta$ -->
-				<!-- </section> -->
-					<section>
+					<section id="transpose-quantize">
 						<h1>Transpose/Quantize</h1>
 						<img width="450" src="images/preproc-before.png">
 						<img width="450" src="images/preproc-after.png">
@@ -180,7 +192,7 @@ END
 				</section>
 				<section>
 					<section>
-						<h1>Model analysis</h1>
+						<h1>Results and analysis</h1>
 					</section>
 					<!-- <section> -->
 					<!-- 	<h1>Dropout</h1> -->
@@ -191,7 +203,7 @@ END
 						<p><img style="max-height: 500px;" src="images/neuron-activations.png"></p>
 					</section>
 					<section>
-						<h1>Specificity to music-theoretic concepts</h1>
+						<h3>Model learns music theory</h3>
 						<p><img style="max-height: 500px;" src="images/model-analysis-cells-individual.png"></p>
 					</section>
 					<section>
@@ -263,14 +275,14 @@ END
 				<section id="gigster">
 					<img style="box-shadow: none; border: 0px;" src="images/gigster-logo.png" />
 					<h1>Thank You!</h1>
-					<p>Please fill out the feedback/interest form at:</p>
+					<p>Interested in software engineering roles?</p>
 					<a href="http://cornell.gigster.com/">cornell.gigster.com</a><br />
 					<br />
 					<p>Feel free to reach out to us:</p>
 					<code>{feynman,emin}@gigster.com</code>
 				</section>
 				<section>
-					<section data-markdown id="practical">
+					<section data-markdown id="practical-sample">
 						<script type="text/template">
 							# Has your BachBot learned to compose?
 							* Highest `iter`, `temp=0.9` is a decent choice
