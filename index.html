@@ -25,17 +25,13 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<section data-markdown id="practical-train">
+					<section data-markdown id="practical-prepare">
 						<script type="text/template">
 							## Build your own BachBot!
 							* Install `docker` from [docker.com](https://www.docker.com/)
-							* Using USB:
+							* Pull the image:
 							```
-							docker load < bachbot-cornell.tar
-							```
-							* Dockerhub:
-							```
-							docker pull fliang/bachbot:cornell
+							docker pull fliang/bachbot:aibtb
 							```
 							* Prepare data, train model:
 							```
@@ -53,7 +49,7 @@
 						<h1 class="title">BachBot</h1>
 						<h2 class="subtitle">Automatic stylistic composition</h1>
 						<h4 class="author1">Feynman Liang</h2>
-						<h5 class="date">Google Brain, October 22, 2016</h3>
+						<h5 class="date">AI By The Bay, March 6, 2017</h3>
 					</section>
 				</section>
 				<section>
@@ -69,7 +65,7 @@
 					</section>
 				</section>
 				<section>
-					<section id="music-background">
+					<section id="music-theory-primer">
 						<h1>Music theory primer</h1>
 					</section>
 					<section id="piano-roll">
@@ -81,9 +77,6 @@
 								<li>pitch</li>
 								<li>duration</li>
 								<li>transposition</li>
-								<li>harmonization</li>
-								<li>cadences</li>
-								<li>fermatas</li>
 							</ul>
 						</aside>
 					</section>
@@ -93,12 +86,9 @@
 						<img src="images/score.png" />
 						<aside class="notes">
 							<ul>
-								<li>pitch</li>
-								<li>duration</li>
-								<li>transposition</li>
-								<li>harmonization</li>
-								<li>cadences</li>
-								<li>fermatas</li>
+								<li>this looks more familiar</li>
+								<li>4 part harmony</li>
+								<li>phrases and fermatas</li>
 							</ul>
 						</aside>
 					</section>
@@ -116,7 +106,7 @@
 							<img width="450" src="images/preproc-after.png" />
 						</a>
 					</section>
-					<section>
+					<section id="polyphony">
 						<h1>Handling Polyphony</h1>
 						<ul>
 							<li>
@@ -128,14 +118,15 @@
 							</li>
 						</ul>
 					</section>
-					<section>
+					<section id="sequence-encode">
 						<h1>Handling Polyphony</h1>
 						<ul>
 							<li>
 								Reduce vocabulary size by treating parts independently
 							</li>
 							<li class="fragment">
-								SATB ordering
+								Tokenize individual notes (instead of chords) in SATB order,
+								explicit frame delimiters "<code>|||</code>"
 							</li>
 						</ul>
 						<div class="fragment" style="width: 40%; float: left;">
@@ -172,18 +163,18 @@ END
 							</pre>
 						</div>
 					</section>
-					<section>
+					<section id="corpus-statistics">
 						<h1>Corpus statistics</h1>
 						<p><img src="images/corpus-stats.png"></p>
 					</section>
-					<section>
+					<section id="practical-prepare-diagram">
 						<a href="images/practical-prepare.png">
 							<img src="images/practical-prepare.png" />
 						</a>
 					</section>
 				</section>
 				<section>
-					<section id="nn-background">
+					<section id="nn-primer">
 						<h1>Neural networks primer</h1>
 					</section>
 					<section id="neuron">
@@ -219,122 +210,140 @@ END
 						<h1>LSTM</h1>
 						<img height="500" src="images/LSTM.png" />
 					</section>
-					<section>
+					<section id="practical-generate-diagram">
 						<a href="images/practical-train-decode.png">
 							<img src="images/practical-train-decode.png" />
 						</a>
 					</section>
-				</section>
-				<section>
-					<section>
-						<h1>Results and analysis</h1>
-					</section>
-					<section>
-						<h1>Dropout</h1>
-						<p><img src="images/dropout.png"></p>
-					</section>
-					<section>
-						<h1>Neuron activations</h1>
-						<p><img style="max-height: 500px;" src="images/neuron-activations.png"></p>
-					</section>
-					<section>
-						<h3>Model learns music theory</h3>
-						<p><img style="max-height: 500px;" src="images/model-analysis-cells-individual.png"></p>
-					</section>
-					<section>
-						<h1>Model Outputs</h1>
-						<iframe scrolling="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/246633991&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false" width="100%" height="450" frameborder="0">
-						</iframe>
-					</section>
-					<section>
-						<h1>Harmonization</h1>
-						<p><img src="images/harmonization-error-rates.png"></p>
-					</section>
-				</section>
-				<section>
-					<section>
-						<h1>Music Turing Test</h1>
-						<p><a href="http://bachbot.com/">bachbot.com</a></p>
-					</section>
-					<section>
-						<h1>Participants</h1>
-						<p><img src="images/participants-by-country.png"></p>
-					</section>
-					<section>
-						<h1>Participants</h1>
-						<p><img src="images/participant-skills.png"></p>
-					</section>
-					<section>
-						<h1>Results</h1>
-						<p><img src="images/performance-questiontype.png"></p>
-					</section>
-					<section>
-						<h1>Results</h1>
-						<p><img src="images/performance-questiontype-experience.png"></p>
-					</section>
-					</section>
-				</section>
-				<section>
-					<section id="conclusion"><h1>Conclusion</h1></section>
-					<section id="conclusion-1">
-						<h1>Conclusion</h1>
-						<ul>
-							<li>
-								Model learns music theory without prior knowledge, empirically
-								validating theory
-							</li>
-							<li class="fragment">
-								Average user performs only 9% better than random guessing
-							</li>
-							<li class="fragment">
-								Future work:
-								<ul>
-									<li class="fragment" data-fragment-index="3">
-										Account for future in harmonization
-									</li>
-									<li class="fragment" data-fragment-index="4">
-										Investigate orderings besides SATB / other ways
-										to reduce vocabulary
-									</li>
-									<li class="fragment" data-fragment-index="5">
-										Try other corpuses
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</section>
-					<section id="questions">
-						<h1>Questions?</h1>
-					</section>
-				</section>
-				<section id="gigster">
-					<img style="box-shadow: none; border: 0px;" src="images/gigster-logo.png" />
-					<h1>Thank You!</h1>
-					<p>Interested in software engineering roles?</p>
-					<a href="http://cornell.gigster.com/">cornell.gigster.com</a><br />
-					<br />
-					<p>Feel free to reach out to us:</p>
-					<code>{feynman,emin}@gigster.com</code>
-				</section>
-				<section>
-					<section>
-						<h3>Has your BachBot learned to compose?</h3>
-						<img src="images/practical-train-decode.png" />
-					</section>
-					<section data-markdown id="practical-sample">
+					<section data-markdown id="practical-generate">
 						<script type="text/template">
 							### Has your BachBot learned to compose?
 							* Decent choices: most recent `iter`, `temp=0.9`
 							```
 							bachbot sample ~/bachbot/scratch/checkpoints/*/checkpoint_<ITER>.t7 -t <TEMP>
-							bachbot decode sampled_stream ~/bachbot/scratch/sampled_$TMP.utf
-							docker cp bachbot:/root/bachbot/scratch/out .
+									bachbot decode sampled_stream ~/bachbot/scratch/sampled_$TMP.utf
+									docker cp bachbot:/root/bachbot/scratch/out .
 							```
 							* Outputs are in `~/bachbot/scratch/out`
 							* Try other `temp`s and `iter`s
 							* *Challenge*: Modify `bachbot/scripts/datasets.py` to train BachBot on your choice of music!
 						</script>
 					</section>
+				</section>
+				<section>
+					<section id="results">
+						<h1>Results and analysis</h1>
+					</section>
+					<section id="dropout">
+						<h1>Dropout</h1>
+						<p><img src="images/dropout.png"></p>
+					</section>
+					<section id="neuron-activations">
+						<h1>Neuron activations</h1>
+						<p>
+							<a href="images/neuron-activations.png">
+								<img style="max-height: 500px;" src="images/neuron-activations.png">
+							</a>
+						</p>
+						<aside class="notes">
+							<ul>
+								<li>pooled over frames to make interpretation easier</li>
+								<li>the rests / held notes show up as streaks in the input, propogated upwards</li>
+								<li>no clear patterns in lower levels, black box nature of deep networks</li>
+								<li>
+									final outputs are sharp, look like piano roll
+									<ul>
+										<li>
+											makes sense, target are next-note predictions so this is a
+											probability distribution over likely next notes
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</aside>
+					</section>
+					<section id="neurons-music-theory">
+						<h3>Model learns music theory</h3>
+						<p><img style="max-height: 500px;" src="images/model-analysis-cells-individual.png"></p>
+						<aside class="notes">
+							<ul>
+								<li>
+									Layer 1, neuron 64 -- dominant seventh chords in the main, tonic key.
+									These are the main non-triadic harmony, are strongly key defining, and
+									have a important function in the harmonic closure of phrases in this style.
+								</li>
+								<li>
+									Layer 1, neuron 151 -- dominant seventh chord for the two cadences in the relative
+									minor that end phrases 2 and 4. These are the only two appearances in
+									the chorale of the pitch G# which is foreign to C major, and strongly key
+									defining in a minor
+								</li>
+							</ul>
+						</aside>
+					</section>
+					<section id="sample-compositions">
+						<h1>Sample compositions</h1>
+						<iframe scrolling="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/246633991&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false" width="100%" height="450" frameborder="0">
+						</iframe>
+					</section>
+				</section>
+				<section>
+					<section id="turing-test">
+						<h1>Music Turing Test</h1>
+						<p><a href="http://bachbot.com/">bachbot.com</a></p>
+					</section>
+					<section id="participants-geo">
+						<h1>Participants</h1>
+						<p><img src="images/participants-by-country.png"></p>
+					</section>
+					<section id="participants-skills">
+						<h1>Participants</h1>
+						<p><img src="images/participant-skills.png"></p>
+					</section>
+					<section id="performance">
+						<h1>Results</h1>
+						<p><img src="images/performance-questiontype.png"></p>
+					</section>
+					<section id="performance-by-skill">
+						<h1>Results</h1>
+						<p><img src="images/performance-questiontype-experience.png"></p>
+					</section>
+					</section>
+				</section>
+				<section>
+					<section id="conclusion">
+						<h1>Conclusion</h1>
+						<ul>
+							<li class="fragment">
+								Deep LSTM generative model for composing, completing, and generating
+								polyphonic music
+								<ul>
+									<li class="fragment">
+										Integrated into <a href="https://github.com/tensorflow/magenta/tree/master/magenta/models/polyphony_rnn">Google Magenta</a>
+									</li>
+								</ul>
+							</li>
+							<li class="fragment">
+								Model appears to learn music theoretic without prior knowledge
+							</li>
+							<li class="fragment">
+								Largest music Turing test to date with over 1779 participants
+								<ul>
+									<li class="fragment">
+										Average performance on music Turing test only 7% better than random guessing
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+				</section>
+				<section id="gigster">
+					<img style="box-shadow: none; border: 0px;" src="images/gigster-logo.png" />
+					<h1>Thank You!</h1>
+					<p>Questions? Ask now.</p>
+					<hr />
+					<p>Interested in software engineering roles?</p>
+					Email me: <code>feynman@gigster.com</code>
 				</section>
 			</div>
 		</div>
